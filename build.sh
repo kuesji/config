@@ -1,45 +1,47 @@
 #!/usr/bin/bash
+set -e
 
-
-build(){
- gcc config.c -o config -lcrypt
+c_run(){
+echo $*
+$*
 }
 
-clean(){
+c_build(){
+ c_run gcc config.c -o config -lcrypt -O3 -s 
+}
+
+c_clean(){
  if [ -f config ]; then
-  rm config
+  c_run rm config
  fi
 }
 
-install(){
+c_install(){
  if [ "$(id -u)" != "0" ]; then
   echo "root needed for installation"
   return
  fi
 
- mv config /usr/bin/config
- chown root:root /usr/bin/config
- chmod 4755 /usr/bin/config
+ c_run mv config $DESTDIR/usr/bin/config
+ c_run chown root:root $DESTDIR/usr/bin/config
+ c_run chmod 4755 $DESTDIR/usr/bin/config
 }
 
-uninstall(){
+c_uninstall(){
  if [ "$(id -u)" != 0 ]; then
   echo "root needed for uninstallation"
   return
  fi
 
- rm /usr/bin/config
+ c_run rm $DESTDIR/usr/bin/config
 }
 
 
-if [ "$1" == 'build' ]; then
- build
-elif [ "$1" == 'clean' ]; then
- clean
-elif [ "$1" == 'install' ]; then
- install
-elif [ "$1" == 'uninstall' ]; then
- uninstall
-else
- echo "use with one of following commands: build,clean,install,uninstall"
-fi
+for i in $* ; do
+ [ "$i" == 'build' ] && c_build
+ [ "$i" == 'clean' ] && c_clean
+ [ "$i" == 'install' ] && c_install
+ [ "$i" == 'uninstall' ] && c_uninstall
+ [ "$i" == 'help' ] && echo "use with one of following commands: build,clean,install,uninstall"
+done
+exit 0
