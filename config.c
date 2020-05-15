@@ -62,7 +62,7 @@ int lock_config(int fd){
   return -1;
  }
 
- if( flags & (FS_IMMUTABLE_FL == FS_IMMUTABLE_FL )){
+ if( (flags & FS_IMMUTABLE_FL) == FS_IMMUTABLE_FL ){
   return 0;
  }
 
@@ -83,7 +83,7 @@ int unlock_config(int fd){
   return -1;
  }
 
- if( flags & (FS_IMMUTABLE_FL != FS_IMMUTABLE_FL)){
+ if( (flags & FS_IMMUTABLE_FL) != FS_IMMUTABLE_FL){
   return 0;
  }
 
