@@ -1,22 +1,23 @@
-#!/usr/bin/bash
+#!/bin/env bash
 set -e
 
 c_run(){
-echo $*
+echo  "$*"
 $*
 }
 
-c_build(){
- c_run gcc config.c -o config -lcrypt -O3 -s 
+build(){
+ [ ! -n $CC ] && CC=gcc
+ c_run $CC config.c -o config -lcrypt -O3 -s 
 }
 
-c_clean(){
+clean(){
  if [ -f config ]; then
   c_run rm config
  fi
 }
 
-c_install(){
+install(){
  if [ "$(id -u)" != "0" ]; then
   echo "root needed for installation"
   return
@@ -27,7 +28,7 @@ c_install(){
  c_run chmod 4755 $DESTDIR/usr/bin/config
 }
 
-c_uninstall(){
+uninstall(){
  if [ "$(id -u)" != 0 ]; then
   echo "root needed for uninstallation"
   return
@@ -37,11 +38,15 @@ c_uninstall(){
 }
 
 
-for i in $* ; do
- [ "$i" == 'build' ] && c_build
- [ "$i" == 'clean' ] && c_clean
- [ "$i" == 'install' ] && c_install
- [ "$i" == 'uninstall' ] && c_uninstall
- [ "$i" == 'help' ] && echo "use with one of following commands: build,clean,install,uninstall"
-done
+if [ "$1" == 'build' ]; then
+ build
+elif [ "$1" == 'clean' ]; then
+ clean
+elif [ "$1" == 'install' ]; then
+ install
+elif [ "$1" == 'uninstall' ]; then
+ uninstall
+else
+ echo "use with one of following commands: build,clean,install,uninstall"
+fi
 exit 0
