@@ -2,8 +2,8 @@
 set -e
 
 c_run(){
-echo  "$*"
-$*
+ echo  "$*"
+ $*
 }
 
 build(){
